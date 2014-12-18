@@ -95,6 +95,7 @@ function updateEvent(event, delta, revertFunc){
 		selectable: true,
 		selectHelper: true,
 		timeFormat:{agenda:'H:mm','':'H:mm'} , 
+		height:550,
 
 		// getAllEvents
 		events: {
@@ -213,6 +214,7 @@ function updateEvent(event, delta, revertFunc){
 </head>
 
 <body>
+<h2>Timetable</h2>
 <div id='calendar'></div>
 <div id="dialog"  style="display:none;"></div>
 </body>

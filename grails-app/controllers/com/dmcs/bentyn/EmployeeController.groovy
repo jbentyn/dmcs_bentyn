@@ -3,110 +3,134 @@ package com.dmcs.bentyn
 
 
 import static org.springframework.http.HttpStatus.*
-
-import org.codehaus.groovy.grails.web.json.JSONObject;
-
-import grails.converters.JSON;
 import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
 class EmployeeController {
 
-	
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+	static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond Employee.list(params), model:[employeeInstanceCount: Employee.count()]
-    }
+	private static final imageTypes = ['image/png', 'image/jpeg', 'image/gif']
 
-    def show(Employee employeeInstance) {
-        respond employeeInstance
-    }
+	def index(Integer max) {
+		params.max = Math.min(max ?: 10, 100)
+		respond Employee.list(params), model:[employeeInstanceCount: Employee.count()]
+	}
 
-    def create() {
-        respond new Employee(params)
-    }
+	def show(Employee employeeInstance) {
+		respond employeeInstance
+	}
 
-    @Transactional
-    def save(Employee employeeInstance) {
-        if (employeeInstance == null) {
-            notFound()
-            return
-        }
+	def create() {
+		respond new Employee(params)
+	}
 
-        if (employeeInstance.hasErrors()) {
-            respond employeeInstance.errors, view:'create'
-            return
-        }
+	@Transactional
+	def save(Employee employeeInstance) {
+		if (employeeInstance == null) {
+			notFound()
+			return
+		}
 
-        employeeInstance.save flush:true
+		getImageforEmployee(employeeInstance,  request)
+		if (employeeInstance.hasErrors()) {
+			respond employeeInstance.errors, view:'create'
+			return
+		}
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'employee.label', default: 'Employee'), employeeInstance.id])
-                redirect employeeInstance
-            }
-            '*' { respond employeeInstance, [status: CREATED] }
-        }
-    }
+		employeeInstance.save flush:true
 
-    def edit(Employee employeeInstance) {
-        respond employeeInstance
-    }
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.created.message', args: [message(code: 'employee.label', default: 'Employee'), employeeInstance.id])
+				redirect employeeInstance
+			}
+			'*' { respond employeeInstance, [status: CREATED] }
+		}
+	}
 
-    @Transactional
-    def update(Employee employeeInstance) {
-        if (employeeInstance == null) {
-            notFound()
-            return
-        }
+	def edit(Employee employeeInstance) {
+		respond employeeInstance
+	}
 
-        if (employeeInstance.hasErrors()) {
-            respond employeeInstance.errors, view:'edit'
-            return
-        }
+	@Transactional
+	def update(Employee employeeInstance) {
+		if (employeeInstance == null) {
+			notFound()
+			return
+		}
 
-        employeeInstance.save flush:true
+		getImageforEmployee(employeeInstance,  request)
+		if (employeeInstance.hasErrors()) {
+			respond employeeInstance.errors, view:'edit'
+			return
+		}
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'Employee.label', default: 'Employee'), employeeInstance.id])
-                redirect employeeInstance
-            }
-            '*'{ respond employeeInstance, [status: OK] }
-        }
-    }
+		employeeInstance.save flush:true
 
-    @Transactional
-    def delete(Employee employeeInstance) {
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.updated.message', args: [message(code: 'Employee.label', default: 'Employee'), employeeInstance.id])
+				redirect employeeInstance
+			}
+			'*'{ respond employeeInstance, [status: OK] }
+		}
+	}
 
-        if (employeeInstance == null) {
-            notFound()
-            return
-        }
+	@Transactional
+	def delete(Employee employeeInstance) {
 
-        employeeInstance.delete flush:true
+		if (employeeInstance == null) {
+			notFound()
+			return
+		}
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Employee.label', default: 'Employee'), employeeInstance.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-        }
-    }
-	
+		employeeInstance.delete flush:true
+
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.deleted.message', args: [message(code: 'Employee.label', default: 'Employee'), employeeInstance.id])
+				redirect action:"index", method:"GET"
+			}
+			'*'{ render status: NO_CONTENT }
+		}
+	}
 
 
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'employee.label', default: 'Employee'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
-    }
-	
+	protected void notFound() {
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.not.found.message', args: [message(code: 'employee.label', default: 'Employee'), params.id])
+				redirect action: "index", method: "GET"
+			}
+			'*'{ render status: NOT_FOUND }
+		}
+	}
+	protected void getImageforEmployee(Employee employeeInstance, def request){
+		def file = request.getFile('image')
+
+		// List of OK mime-types
+		if (!imageTypes.contains(file.getContentType())) {
+			flash.message = "Image must be one of: ${imageTypes}"
+			redirect employeeInstance
+		}
+
+		// Save the image and mime type
+		employeeInstance.image = file.bytes
+		employeeInstance.imageType = file.contentType
+
+	}
+
+	def renderImage() {
+		def employee = Employee.get(params.id)
+		if (!employee || !employee.image || !employee.imageType) {
+			response.sendError(404)
+			return
+		}
+		response.contentType = employee.imageType
+		response.contentLength = employee.image.size()
+		OutputStream out = response.outputStream
+		out.write(employee.image)
+		out.close()
+	}
 }

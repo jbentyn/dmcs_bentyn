@@ -15,6 +15,9 @@
   		<asset:stylesheet src="application.css"/>
 		<asset:javascript src="application.js"/>
 		
+		<link rel="stylesheet" href="<g:resource dir="css" file="style.css" />" type="text/css">
+<%--		<asset:stylesheet src="bootstrap_cerulean.css" />--%>
+		
 		<%--JQuery-UI--%>
 		<link rel="stylesheet" href="<g:resource dir="js/jquery-ui-1.11.2" file="jquery-ui.min.css" />" type="text/css">
 		<link rel="stylesheet" href="<g:resource dir="js/jquery-ui-1.11.2" file="jquery-ui.structure.min.css" />" type="text/css">

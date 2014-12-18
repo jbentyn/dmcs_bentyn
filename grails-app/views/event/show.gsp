@@ -36,7 +36,7 @@
 				<li class="fieldcontain">
 					<span id="employee-label" class="property-label"><g:message code="event.employee.label" default="Employee" /></span>
 					
-						<span class="property-value" aria-labelledby="employee-label"><g:link controller="employee" action="show" id="${eventInstance?.employee?.id}">${eventInstance?.employee?.encodeAsHTML()}</g:link></span>
+						<span class="property-value" aria-labelledby="employee-label"><g:link controller="employee" action="show_old" id="${eventInstance?.employee?.id}">${eventInstance?.employee?.encodeAsHTML()}</g:link></span>
 					
 				</li>
 				</g:if>
