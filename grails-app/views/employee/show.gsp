@@ -31,6 +31,7 @@
 			
 			<g:render template="adminProperties" />
 			
+			<g:set var="calendarEditable" value="${false}"/>
 			<g:render template="calendar" />
 			
 			<g:form url="[resource:employeeInstance, action:'delete']" method="DELETE">

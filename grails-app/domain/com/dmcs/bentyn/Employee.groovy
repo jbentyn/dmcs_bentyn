@@ -29,12 +29,15 @@ class Employee {
 		username blank: false, unique: true
 		password blank: false
 		webpage(nullable:true)
+		email(nullable:true)
+		phone(nullable:true)
 		image(nullable:true /* maxSize: 16384  16K */)
 		imageType(nullable:true)
 	}
 
 	static mapping = {
 		password column: '`password`'
+		image lazy: false
 	}
 
 	Set<Role> getAuthorities() {

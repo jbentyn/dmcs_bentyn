@@ -40,6 +40,7 @@ function showInputDialog(header,label,okFunction){
                  }
    });
 }
+<g:if test="${calendarEditable}" >
 
 function updateEvent(event, delta, revertFunc){
 	var updateUrl = '<g:createLink url="[action:'update',controller:'event']" />';
@@ -75,6 +76,7 @@ function updateEvent(event, delta, revertFunc){
 				});
      
 }
+</g:if>
 
 	$(document).ready(function() {
 		var getUrl = '<g:createLink url="[action:'getEvents',controller:'event']" />';
@@ -84,7 +86,9 @@ function updateEvent(event, delta, revertFunc){
 
 	 $('#calendar').fullCalendar({
 	
-		editable :true,
+		editable : ${calendarEditable},
+		selectable: ${calendarEditable},
+		selectHelper: ${calendarEditable},
 		theme : true,
 		firstDay : 1,
 		defaultView : 'agendaWeek',
@@ -92,8 +96,6 @@ function updateEvent(event, delta, revertFunc){
 		slotDuration : "1:00:00",
 		minTime : "8:00:00",
 		maxTime : "21:00:00",
-		selectable: true,
-		selectHelper: true,
 		timeFormat:{agenda:'H:mm','':'H:mm'} , 
 		height:550,
 
@@ -105,7 +107,7 @@ function updateEvent(event, delta, revertFunc){
 	        	showMessageDialog("Error",'there was an error while fetching events!');
 	        },
 	    },
-
+	    <g:if test="${calendarEditable}" >
 	    //creating by selecting range
 		select: function(start, end, jsEvent,view){
 			var isAllDay=!start.hasTime();
@@ -205,7 +207,7 @@ function updateEvent(event, delta, revertFunc){
 		// update when moving and resize event
        eventDrop:function(event, delta, revertFunc) { updateEvent(event, delta, revertFunc)},
        eventResize:function(event, delta, revertFunc) { updateEvent(event, delta, revertFunc) } 
-  		
+  		</g:if>
 	});
 });
 </script>

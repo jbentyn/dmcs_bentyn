@@ -9,14 +9,15 @@
 <body>
 	<div class="employee-container">
 		<div class="img-container">
-			<g:if test="${employeeInstance.image}">
+			<g:if test="${employeeInstance.image }">
 				<div class="fieldcontain">
 					<img src="${createLink(controller:'employee', action:'renderImage', id:employeeInstance.id )}" />
 				</div>
 			</g:if>
+		
 		</div>
 
-		<ol class="property-list employee">
+		<ol class="property-list employee <g:if test="${ !employeeInstance.image}"> property-container </g:if>" >
 
 			<g:if test="${employeeInstance.name}">
 				<li class="fieldcontain"><span id="name-label" class="property-label"><g:message code="employee.name.label" default="Name" /></span> <span

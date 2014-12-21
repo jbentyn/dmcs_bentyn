@@ -1,4 +1,5 @@
 <%@ page import="com.dmcs.bentyn.Employee"%>
+<%@ page import="com.dmcs.bentyn.Role"%>
 
 <div class="employee-container">
 
@@ -30,17 +31,17 @@
 
 	</div>
 
-	<div class="fieldcontain ${hasErrors(bean: employeeInstance, field: 'email', 'error')} required">
-		<label for="email"> <g:message code="employee.email.label" default="Email" /> <span class="required-indicator">*</span>
+	<div class="fieldcontain ${hasErrors(bean: employeeInstance, field: 'email', 'error')} ">
+		<label for="email"> <g:message code="employee.email.label" default="Email" /> 
 		</label>
-		<g:textField name="email" required="" value="${employeeInstance?.email}" />
+		<g:textField name="email" value="${employeeInstance?.email}" />
 
 	</div>
 
-	<div class="fieldcontain ${hasErrors(bean: employeeInstance, field: 'phone', 'error')} required">
-		<label for="phone"> <g:message code="employee.phone.label" default="Phone" /> <span class="required-indicator">*</span>
+	<div class="fieldcontain ${hasErrors(bean: employeeInstance, field: 'phone', 'error')} ">
+		<label for="phone"> <g:message code="employee.phone.label" default="Phone" /> 
 		</label>
-		<g:textField name="phone" required="" value="${employeeInstance?.phone}" />
+		<g:textField name="phone" value="${employeeInstance?.phone}" />
 	</div>
 
 	<div class="fieldcontain ${hasErrors(bean: employeeInstance, field: 'webpage', 'error')} ">
@@ -56,29 +57,53 @@
 
 
 	<h2>User properties</h2>
-
+<%-- Only current user	--%>
 	<div class="fieldcontain ${hasErrors(bean: employeeInstance, field: 'username', 'error')} required">
 		<label for="username"> <g:message code="employee.username.label" default="Username" /> <span class="required-indicator">*</span>
 		</label>
 		<g:textField name="username" required="" value="${employeeInstance?.username}" />
 
 	</div>
-
-	<div class="fieldcontain ${hasErrors(bean: employeeInstance, field: 'password', 'error')} required">
-		<label for="password"> <g:message code="employee.password.label" default="Password" /> <span class="required-indicator">*</span>
+<g:if test="${actionName=='edit' }">
+	<div class="fieldcontain">
+		<label for="newPassword"> <g:message code="employee.newPassword.label" default="New password" /> 
 		</label>
-		<g:textField name="password" required="" value="${employeeInstance?.password}" />
+		<g:passwordField  name="newPassword" />
+
+	</div>
+	
+	<div class="fieldcontain">
+		<label for="confirmPassword"> <g:message code="employee.confirmPassword.label" default="Confirm new password" /> 
+		</label>
+		<g:passwordField  name="confirmPassword" />
+
+	</div>
+</g:if>	
+
+	<h2>Admin settings</h2>
+	<%-- Only admin	--%>
+
+		<div class="fieldcontain">
+		<label for="roles"> <g:message code="Roles" default="Roles" /> </label>
+		<g:each in="${Role.list()}">
+			<g:set var="isChecked" value="false" scope="request" />
+			<g:if test="${employeeInstance.id != null }">
+				<g:set var="isChecked" value="${employeeInstance?.authorities.contains(it)}" />
+			</g:if>
+			<g:checkBox name="roles[]" value="${it.id}" checked="${isChecked }" />&nbsp;${it.authority }
+		</g:each>
 
 	</div>
 
-	<h2>Admin settings</h2>
-
 	<div class="fieldcontain ${hasErrors(bean: employeeInstance, field: 'passwordExpired', 'error')} ">
-		<label for="passwordExpired"> <g:message code="employee.passwordExpired.label" default="Password Expired" />
-
-		</label>
-		<g:checkBox name="passwordExpired" value="${employeeInstance?.passwordExpired}" />
-
+		<label for="passwordExpired"> <g:message code="employee.passwordExpired.label" default="Password Expired" /></label>
+		<g:if test="${actionName=='create' || actionName=='save'}">
+			<g:checkBox name="passwordExpired" value="true" checked="true" disabled="true" />
+			<g:hiddenField name="password" value="******"/>
+		</g:if>
+		<g:else>
+			<g:checkBox name="passwordExpired" value="${employeeInstance?.passwordExpired}" />
+		</g:else>
 	</div>
 
 	<div class="fieldcontain ${hasErrors(bean: employeeInstance, field: 'accountExpired', 'error')} ">

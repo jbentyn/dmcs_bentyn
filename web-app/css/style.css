@@ -23,11 +23,12 @@
 	clear:both;
 	position:relative;
 	left:128px;
+	overflow: hidden;
 }
 
 .employee-container{
 	clear:both;
-	overflow: auto;
+	
 }
 h2{
 	border-bottom: 1px solid #cccccc;

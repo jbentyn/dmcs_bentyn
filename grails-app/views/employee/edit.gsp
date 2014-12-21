@@ -35,13 +35,14 @@
 				</g:eachError>
 			</ul>
 		</g:hasErrors>
-		<g:form url="[resource:employeeInstance, action:'update']" method="PUT" enctype="multipart/form-data">
+		<g:form url="[resource:employeeInstance, action:'update']" method="POST" enctype="multipart/form-data">
 			<g:hiddenField name="version" value="${employeeInstance?.version}" />
 			
 			<fieldset class="form">
 				<g:render template="form" />
 			</fieldset>
 			
+			<g:set var="calendarEditable" value="${true}"/>
 			<g:render template="calendar" />
 			
 			<fieldset class="buttons">

@@ -33,8 +33,10 @@
 			<tbody>
 				<g:each in="${employeeInstanceList}" status="i" var="employeeInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-
-						<td><g:render template="details" bean="${employeeInstance}" var="employeeInstance"></g:render> <%--Only current user or admin--%>
+					
+						<td>
+						<g:link action="show" resource="${employeeInstance}" >
+						<g:render template="details" bean="${employeeInstance}" var="employeeInstance"></g:render> <%--Only current user or admin--%>
 							<fieldset class="buttons">
 								<g:link class="edit" action="edit" resource="${employeeInstance}">
 									<g:message code="default.button.edit.label" default="Edit" />
@@ -42,9 +44,10 @@
 								<%--Only  admin--%>
 								<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}"
 									onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
-							</fieldset></td>
-
-
+							</fieldset>
+							</g:link>
+							</td>
+					
 					</tr>
 				</g:each>
 			</tbody>
