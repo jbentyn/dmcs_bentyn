@@ -26,13 +26,13 @@ class Employee {
 	static transients = ['springSecurityService']
 
 	static constraints = {
-		username blank: false, unique: true
+		username  blank: false, unique: true
 		password blank: false
-		webpage(nullable:true)
-		email(nullable:true)
-		phone(nullable:true)
-		image(nullable:true /* maxSize: 16384  16K */)
-		imageType(nullable:true)
+		webpage nullable:true
+		email email: true,nullable:true
+		phone matches: "^[0-9]{9}", nullable:true
+		image nullable:true 
+		imageType nullable:true
 	}
 
 	static mapping = {

@@ -10,9 +10,9 @@
 	<div class="employee-container">
 		<div class="img-container">
 			<g:if test="${employeeInstance.image }">
-				<div class="fieldcontain">
-					<img src="${createLink(controller:'employee', action:'renderImage', id:employeeInstance.id )}" />
-				</div>
+				
+					<img class="employee-img" src="${createLink(controller:'employee', action:'renderImage', id:employeeInstance.id )}" />
+				
 			</g:if>
 		
 		</div>
@@ -43,7 +43,7 @@
 
 			<g:if test="${employeeInstance.webpage}">
 				<li class="fieldcontain"><span id="webpage-label" class="property-label"><g:message code="employee.webpage.label" default="Webpage" /></span>
-					<span class="property-value" aria-labelledby="webpage-label"><g:fieldValue bean="${employeeInstance}" field="webpage" /></span></li>
+					<span class="property-value" aria-labelledby="webpage-label"><a style="margin-left: 2%;" href="${employeeInstance.webpage}">${employeeInstance.webpage}</a></span></li>
 			</g:if>
 
 

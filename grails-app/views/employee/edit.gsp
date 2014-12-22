@@ -7,6 +7,11 @@
 <title><g:message code="default.edit.label" args="[entityName]" /></title>
 </head>
 <body>
+	<g:set var="isAdmin" value="${false}" />
+	<sec:access expression="hasRole('ROLE_ADMIN')">
+		<g:set var="isAdmin" value="${true}" />
+	</sec:access>
+	
 	<a href="#edit-employee" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;" /></a>
 	<div class="nav" role="navigation">
 		<ul>
@@ -14,9 +19,12 @@
 			<li><g:link class="list" action="index">
 					<g:message code="default.list.label" args="[entityName]" />
 				</g:link></li>
+			<g:if test="${isAdmin}">	
 			<li><g:link class="create" action="create">
 					<g:message code="default.new.label" args="[entityName]" />
 				</g:link></li>
+			</g:if>
+				
 		</ul>
 	</div>
 	<div id="edit-employee" class="content scaffold-edit" role="main">
@@ -41,10 +49,12 @@
 			<fieldset class="form">
 				<g:render template="form" />
 			</fieldset>
-			
-			<g:set var="calendarEditable" value="${true}"/>
+			<g:set var="calendarEditable" value="${false}" />
+			<g:if test="${employeeInstance.id.toString()==sec.loggedInUserInfo(field: 'id').toString() || isAdmin }">
+				<g:set var="calendarEditable" value="${true}" />
+			</g:if>
 			<g:render template="calendar" />
-			
+
 			<fieldset class="buttons">
 				<g:actionSubmit class="save" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
 			</fieldset>

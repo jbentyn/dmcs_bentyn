@@ -5,7 +5,7 @@
 	width: 220px;
 }
 
-.img-container>img{
+.employee-img{
 	width:128px;
 	height:128px;
 
@@ -17,6 +17,11 @@
 	margin:auto;
 	clear:both;
 	padding:5px;
+}
+
+.img-edit img{
+	width:128px;
+	height:128px;
 }
 
 .property-container{
@@ -44,4 +49,9 @@ h2{
     margin: auto;
     text-align: center;
     width: 96%;
+}
+#loginPanel{
+	background-color: #abbf78;
+	margin;
+	text-align:right;
 }

@@ -121,6 +121,7 @@ log4j.main = {
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.dmcs.bentyn.Employee'
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.dmcs.bentyn.EmployeeRole'
 grails.plugin.springsecurity.authority.className = 'com.dmcs.bentyn.Role'
+grails.plugin.springsecurity.logout.postOnly = false
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/':                              ['permitAll'],
 	'/index':                         ['permitAll'],
@@ -130,8 +131,7 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/**/css/**':                     ['permitAll'],
 	'/**/images/**':                  ['permitAll'],
 	'/**/favicon.ico':                ['permitAll'],
-	'/**/employee/**':                ['permitAll'],
-	'/**':                	['permitAll']
+	'/**/employee/renderImage':		  ['permitAll']
 ]
 
 

@@ -9,6 +9,8 @@ import grails.transaction.Transactional
 @Transactional(readOnly = true)
 class EmployeeController {
 
+	def springSecurityService
+
 	static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
 
 	private static final imageTypes = ['image/png', 'image/jpeg', 'image/gif']
@@ -24,33 +26,38 @@ class EmployeeController {
 	}
 	@Secured(['ROLE_ADMIN'])
 	def create() {
-		respond new Employee(params)
+		respond new Employee()
 	}
-	
+
 	@Secured(['ROLE_USER','ROLE_ADMIN'])
 	def edit(Employee employeeInstance) {
 		respond employeeInstance
 	}
 
+
 	@Secured(['ROLE_ADMIN'])
 	@Transactional
 	def save(Employee employeeInstance) {
-		println 'password before:'+employeeInstance.password
+
 		if ( !saveEmployee( params,employeeInstance)){
 			return false
-		} 
+		}
+
+
 
 		if (employeeInstance.hasErrors()) {
 			respond employeeInstance.errors, view:'create'
 			return
 		}
 
-			
+
 		if ( !employeeInstance.save(flush:true) ){
 			respond employeeInstance.errors, view:'create'
 			return
 		}
-		
+
+		createRolesForUser( params, employeeInstance)
+
 		request.withFormat {
 			form multipartForm {
 				flash.message = message(code: 'default.created.message', args: [message(code: 'employee.label', default: 'Employee'), employeeInstance.id])
@@ -60,23 +67,25 @@ class EmployeeController {
 		}
 	}
 
-	
+
 	@Secured(['ROLE_USER','ROLE_ADMIN'])
 	@Transactional
 	def update(Employee employeeInstance) {
-		if ( !saveEmployee( params,employeeInstance)){
+		if ( !saveEmployee(params,employeeInstance)){
 			return false
 		}
+
 
 		if (employeeInstance.hasErrors()) {
 			respond employeeInstance.errors, view:'edit'
 			return
 		}
 
-			if ( !employeeInstance.save(flush:true) ){
+		if ( !employeeInstance.save(flush:true) ){
 			respond employeeInstance.errors, view:'edit'
 			return
 		}
+		getRolesForUser(params, employeeInstance)
 
 		request.withFormat {
 			form multipartForm {
@@ -119,22 +128,16 @@ class EmployeeController {
 	}
 
 	protected boolean saveEmployee(def params, Employee employeeInstance){
-
 		if (employeeInstance == null) {
 			notFound()
 			return false
 		}
 
-		println params
-
-		getRolesForUser(params, employeeInstance)
-
 		getImageforEmployee(employeeInstance,  request)
-
 		changePassword(params,employeeInstance)
 		return true
 	}
-
+	@Secured(['ROLE_USER','ROLE_ADMIN'])
 	protected boolean getImageforEmployee(Employee employeeInstance, def request){
 		def file = request.getFile('image')
 
@@ -164,20 +167,25 @@ class EmployeeController {
 		out.close()
 	}
 
+	protected void createRolesForUser(def params, Employee employeeInstance){
+		def roles = params.list('roles[]')
+		def newRoles = Role.getAll(roles)
+		newRoles.each{
+			def er = new EmployeeRole (employee:employeeInstance, role:it)
+			er.save flush:true
+		}
+	}
+
 	protected void getRolesForUser(def params, Employee employeeInstance){
 		def roles = params.list('roles[]')
 		if (! roles.isEmpty()){
 			def oldRoles= EmployeeRole.findAllByEmployee(employeeInstance);
-			def newRoles = Role.getAll(roles)
 
 			oldRoles.each {
 				it.delete flush :true
 			}
 
-			newRoles.each{
-				def er = new EmployeeRole (employee:employeeInstance, role:it)
-				er.save flush:true
-			}
+			createRolesForUser( params, employeeInstance)
 		}
 	}
 
@@ -185,7 +193,7 @@ class EmployeeController {
 		String newPassword =params.newPassword;
 		String confirmPassword = params.confirmPassword;
 
-		if ("".equals(newPassword) ){
+		if (!"".equals(newPassword) ){
 			if( confirmPassword == newPassword){
 				employeeInstance.password=newPassword;
 			}else{

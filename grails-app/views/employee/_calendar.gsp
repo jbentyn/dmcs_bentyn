@@ -169,6 +169,7 @@ function updateEvent(event, delta, revertFunc){
                 					{
                     					event.title=title;
                     					updateEvent(event, null, null);
+                    					$("#dialog").dialog( "close" );
                          			}
                          		});
                              },
@@ -179,6 +180,7 @@ function updateEvent(event, delta, revertFunc){
                           		else{
                               		event.repeatable = !event.repeatable;
                               		updateEvent(event, null, null);
+                              		 $("#dialog").dialog( "close" );
                                 }
                               },
                              

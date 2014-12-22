@@ -10,6 +10,7 @@ import com.sun.beans.decoder.TrueElementHandler;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
 
 import grails.converters.JSON;
+import grails.plugin.springsecurity.annotation.Secured;
 import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
@@ -19,6 +20,7 @@ class EventController {
 	
 	
 	@Transactional
+	@Secured(['ROLE_USER','ROLE_ADMIN'])
     def create() {
 		Event event = parseEvent(new Event(),params);
 		event.save flush:true
@@ -27,6 +29,7 @@ class EventController {
 
 
     @Transactional
+	@Secured(['ROLE_USER','ROLE_ADMIN'])
     def update() {
 		Event eventInstance = Event.get(Long.parseLong (params.id))
         eventInstance = parseEvent(eventInstance,params);
@@ -39,6 +42,7 @@ class EventController {
     }
 
     @Transactional
+	@Secured(['ROLE_USER','ROLE_ADMIN'])
     def delete() {
 		Event eventInstance = Event.get(Long.parseLong (params.id))
         if (eventInstance == null) {
@@ -50,7 +54,7 @@ class EventController {
     }
 
 	
-    
+	@Secured(['IS_AUTHENTICATED_ANONYMOUSLY'])
 	def getEvents(Employee employeeInstance){
 
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

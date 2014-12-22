@@ -218,7 +218,9 @@ fieldset,
 	overflow: hidden;
 	zoom: 1;
 }
-
+.property-list{
+	min-height: 128px;
+}
 .fieldcontain {
 	margin:5px;
 }
