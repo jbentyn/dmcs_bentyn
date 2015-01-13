@@ -104,7 +104,7 @@ class EmployeeController {
 			notFound()
 			return
 		}
-
+		deleteOldRolesForUser(params, employeeInstance)
 		employeeInstance.delete flush:true
 
 		request.withFormat {
@@ -139,14 +139,13 @@ class EmployeeController {
 	}
 	@Secured(['ROLE_USER','ROLE_ADMIN'])
 	protected boolean getImageforEmployee(Employee employeeInstance, def request){
-		def file = request.getFile('image')
+		def file = request.getFile('imageUp')
 
 		if(file.size != 0){
 			if (!imageTypes.contains(file.getContentType())) {
 				employeeInstance.errors.reject( "Image must be one of: ${imageTypes}")
 				return false
 			}
-
 			employeeInstance.image = file.bytes
 			employeeInstance.imageType = file.contentType
 
@@ -176,15 +175,17 @@ class EmployeeController {
 		}
 	}
 
+	protected deleteOldRolesForUser(def params, Employee employeeInstance){
+		def oldRoles= EmployeeRole.findAllByEmployee(employeeInstance);
+		
+					oldRoles.each {
+						it.delete flush :true
+					}
+	}
 	protected void getRolesForUser(def params, Employee employeeInstance){
 		def roles = params.list('roles[]')
 		if (! roles.isEmpty()){
-			def oldRoles= EmployeeRole.findAllByEmployee(employeeInstance);
-
-			oldRoles.each {
-				it.delete flush :true
-			}
-
+			deleteOldRolesForUser( params, employeeInstance)
 			createRolesForUser( params, employeeInstance)
 		}
 	}
@@ -193,7 +194,7 @@ class EmployeeController {
 		String newPassword =params.newPassword;
 		String confirmPassword = params.confirmPassword;
 
-		if (!"".equals(newPassword) ){
+		if (newPassword != null && !"".equals(newPassword) ){
 			if( confirmPassword == newPassword){
 				employeeInstance.password=newPassword;
 			}else{

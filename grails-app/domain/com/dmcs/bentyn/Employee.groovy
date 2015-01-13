@@ -22,6 +22,7 @@ class Employee {
   
 
 	
+	static hasMany = [events: Event]
 
 	static transients = ['springSecurityService']
 
@@ -30,7 +31,7 @@ class Employee {
 		password blank: false
 		webpage nullable:true
 		email email: true,nullable:true
-		phone matches: "^[0-9]{9}", nullable:true
+		phone matches: "\\d{9}", nullable:true
 		image nullable:true 
 		imageType nullable:true
 	}
@@ -38,6 +39,7 @@ class Employee {
 	static mapping = {
 		password column: '`password`'
 		image lazy: false
+		events cascade: 'all-delete-orphan'
 	}
 
 	Set<Role> getAuthorities() {

@@ -43,8 +43,9 @@
 
 						<td><g:link action="show" resource="${employeeInstance}">
 								<g:render template="details" bean="${employeeInstance}" var="employeeInstance"></g:render>
+								</g:link>
 								<%--Only current user or admin--%>
-								<sec:ifLoggedIn>
+								
 									<g:if test="${employeeInstance.id.toString()==sec.loggedInUserInfo(field: 'id').toString() || isAdmin }">
 										<fieldset class="buttons">
 
@@ -53,25 +54,16 @@
 												<g:message code="default.button.edit.label" default="Edit" />
 											</g:link>
 
-											<%--Only  admin--%>
-
-											<g:if test="${isAdmin}">
-												<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}"
-													onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
-											</g:if>
 										</fieldset>
 									</g:if>
-								</sec:ifLoggedIn>
-							</g:link></td>
+								
+							</td>
 
 					</tr>
 				</g:each>
 			</tbody>
 		</table>
 
-		<div class="pagination">
-			<g:paginate total="${employeeInstanceCount ?: 0}" />
-		</div>
 	</div>
 </body>
 </html>

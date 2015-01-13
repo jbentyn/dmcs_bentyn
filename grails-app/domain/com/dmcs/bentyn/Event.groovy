@@ -12,6 +12,7 @@ class Event {
 	Boolean allDay;
 	Boolean repeatable;
 	
+
 	static belongsTo = [employee:Employee]
 	
 	

@@ -17,7 +17,7 @@
 			</div>
 		</g:if>
 		<label for="image"> <g:message code="employee.image.label" default="Image" /> <span class="required-indicator">*</span>
-		</label> <input type="file" name="image" id="image" />
+		</label> <input type="file" name="imageUp" id="image" />
 
 	</div>
 
